@@ -1,21 +1,31 @@
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import { LightColors } from "../theme/color";
 import { Category } from "../types/category";
+import { Dispatch, SetStateAction } from "react";
+import { TransactionInputProps } from "../types/transaction";
 
 type CategoryPlaceholderProps = {
   categoryImage: React.ReactNode;
   categoryName: string;
   category: Category;
-  setCategory: (category: Category) => void;
+  setTransactionInputValues: Dispatch<SetStateAction<TransactionInputProps>>;
 };
 
 export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {
-  const { categoryImage, categoryName, category, setCategory } = props;
+  const { categoryImage, categoryName, category, setTransactionInputValues } =
+    props;
+
+  const onChangeCategory = (identifierName: string, selectedCategory: any) => {
+    setTransactionInputValues((prevValue) => ({
+      ...prevValue,
+      [identifierName]: selectedCategory,
+    }));
+  };
   return (
     <Pressable
       style={styles.categoryPlaceholderContainer}
       onPress={() =>
-        setCategory({
+        onChangeCategory("category", {
           id: Math.random().toString(36).substring(2, 9),
           name: categoryName,
           isActive: true,

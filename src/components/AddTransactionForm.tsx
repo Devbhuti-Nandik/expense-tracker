@@ -1,9 +1,8 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { FormInput } from "../common/FormInput";
 import { LightColors } from "../theme/color";
-import { Category } from "../types/category";
-import { Transaction } from "../types/transaction";
+import { Transaction, TransactionInputProps } from "../types/transaction";
 import { sanitizeTransactionFormData } from "../utils/helpers";
 import { useTransactionStore } from "../store/useTransactionStore";
 import { useNavigation } from "@react-navigation/native";
@@ -17,35 +16,42 @@ export const AddTransactionForm = ({
   transactionType,
   setTransactionType,
 }: AddTransactionFormProps) => {
-  const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState(new Date());
-  const [category, setCategory] = useState<Category>({
-    id: "",
-    name: "",
-    isActive: false,
-  });
-  const [description, setDescription] = useState("");
+  const [transactionInputValues, setTransactionInputValues] =
+    useState<TransactionInputProps>({
+      amount: 0,
+      date: new Date(),
+      category: {
+        id: "",
+        name: "",
+        isActive: false,
+      },
+      description: "",
+    });
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const navigation = useNavigation();
 
   const resetTransactionForm = () => {
-    setAmount(0);
-    setDate(new Date());
-    setCategory({
-      id: "",
-      name: "",
-      isActive: false,
+    setTransactionInputValues({
+      amount: 0,
+      date: new Date(),
+      category: {
+        id: "",
+        name: "",
+        isActive: false,
+      },
+      description: "",
     });
-    setDescription("");
     setTransactionType("expense");
+    setIsFormValid(false);
   };
   const onSubmit = () => {
     const transaction: Transaction = {
-      amount,
-      date: date.toISOString(),
-      category,
-      description,
+      amount: transactionInputValues.amount,
+      date: transactionInputValues.date.toISOString(),
+      category: transactionInputValues.category,
+      description: transactionInputValues.description,
       type: transactionType,
     };
     const sanitizedTransaction = sanitizeTransactionFormData(transaction);
@@ -54,38 +60,68 @@ export const AddTransactionForm = ({
     navigation.navigate("Transactions" as never);
   };
 
+  useEffect(() => {
+    if (
+      Number(transactionInputValues.amount) > 0 &&
+      transactionInputValues.category.name !== "" &&
+      transactionInputValues.description.trim() !== ""
+    ) {
+      setIsFormValid(true);
+    } else {
+      setIsFormValid(false);
+    }
+  }, [
+    transactionInputValues.amount,
+    transactionInputValues.category,
+    transactionInputValues.description,
+  ]);
+
   return (
     <View style={styles.transactionForm}>
       <FormInput
         label="Amount"
         inputType="amount"
         inputConfig={{ keyboardType: "decimal-pad" }}
-        amount={amount}
-        setAmount={setAmount}
+        transactionInputValues={transactionInputValues}
+        setTransactionInputValues={setTransactionInputValues}
       />
       <FormInput
         label="Date"
         inputType="date"
         inputConfig={{}}
-        date={date}
-        setDate={setDate}
+        transactionInputValues={transactionInputValues}
+        setTransactionInputValues={setTransactionInputValues}
       />
       <FormInput
         label="Categories"
         inputType="categories"
         inputConfig={{}}
-        category={category}
-        setCategory={setCategory}
+        transactionInputValues={transactionInputValues}
+        setTransactionInputValues={setTransactionInputValues}
       />
       <FormInput
         label="Description"
         inputType="description"
         inputConfig={{}}
-        description={description}
-        setDescription={setDescription}
+        transactionInputValues={transactionInputValues}
+        setTransactionInputValues={setTransactionInputValues}
       />
-      <Pressable style={styles.addTransactionButton} onPress={onSubmit}>
-        <Text style={styles.addTransactionButtonText}>Add Transaction</Text>
+      <Pressable
+        style={[
+          styles.addTransactionButton,
+          !isFormValid && styles.disabledButton,
+        ]}
+        onPress={onSubmit}
+        disabled={!isFormValid}
+      >
+        <Text
+          style={[
+            styles.addTransactionButtonText,
+            !isFormValid && styles.disabledButton,
+          ]}
+        >
+          Save
+        </Text>
       </Pressable>
     </View>
   );
@@ -111,5 +147,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: LightColors.background,
     fontWeight: 700,
+  },
+  disabledButton: {
+    color: LightColors.disabledText,
+    backgroundColor: LightColors.disabledBackground,
   },
 });
