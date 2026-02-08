@@ -27,6 +27,7 @@ export const AddTransactionForm = ({
       },
       description: "",
     });
+  const [hasAmountBeenTouched, setHasAmountBeenTouched] = useState(false);
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const navigation = useNavigation();
   const { amount, date, category, description } = transactionFormInput;
@@ -43,6 +44,7 @@ export const AddTransactionForm = ({
       description: "",
     });
     setTransactionType("expense");
+    setHasAmountBeenTouched(false);
   };
   const onSubmit = () => {
     const transaction: Transaction = {
@@ -69,6 +71,8 @@ export const AddTransactionForm = ({
         inputConfig={{ keyboardType: "decimal-pad", maxLength: 10 }}
         transactionInputValues={transactionFormInput}
         setTransactionInputValues={setTransactionFormInput}
+        hasAmountBeenTouched={hasAmountBeenTouched}
+        setHasAmountBeenTouched={setHasAmountBeenTouched}
       />
       <FormInput
         label="Date"

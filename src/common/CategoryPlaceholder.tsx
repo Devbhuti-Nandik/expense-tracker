@@ -17,20 +17,17 @@ export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {
   const { categoryImage, categoryName, category, setTransactionInputValues } =
     props;
 
-  const onChangeCategory = (
-    identifierName: string,
-    selectedCategory: Category
-  ) => {
+  const onChangeCategory = (selectedCategory: Category) => {
     setTransactionInputValues((prevValue) => ({
       ...prevValue,
-      [identifierName]: selectedCategory,
+      category: selectedCategory,
     }));
   };
   return (
     <Pressable
       style={styles.categoryPlaceholderContainer}
       onPress={() =>
-        onChangeCategory("category", {
+        onChangeCategory({
           id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
           name: categoryName,
           isActive: true,

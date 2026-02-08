@@ -26,47 +26,35 @@ import { CategoryPlaceholder } from "./CategoryPlaceholder";
 import { TransactionFormInputProps } from "../types/transaction";
 import { isValidAmount } from "../utils/regexValidation";
 
-type FormInputProps =
-  | {
-      inputType: "amount";
-      label: string;
-      inputConfig: any;
-      transactionInputValues: TransactionFormInputProps;
-      setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionFormInputProps>
-      >;
-    }
-  | {
-      inputType: "date";
-      label: string;
-      inputConfig: any;
-      transactionInputValues: TransactionFormInputProps;
-      setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionFormInputProps>
-      >;
-    }
-  | {
-      inputType: "categories";
-      label: string;
-      inputConfig: any;
-      transactionInputValues: TransactionFormInputProps;
-      setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionFormInputProps>
-      >;
-    }
-  | {
-      inputType: "description";
-      label: string;
-      inputConfig: any;
-      transactionInputValues: TransactionFormInputProps;
-      setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionFormInputProps>
-      >;
-    };
+type BaseFormInputProps = {
+  label: string;
+  inputConfig: any;
+  transactionInputValues: TransactionFormInputProps;
+  setTransactionInputValues: Dispatch<
+    SetStateAction<TransactionFormInputProps>
+  >;
+  hasAmountBeenTouched?: boolean;
+  setHasAmountBeenTouched?: Dispatch<SetStateAction<boolean>>;
+};
+
+type FormInputProps = BaseFormInputProps & {
+  inputType: "amount" | "date" | "categories" | "description";
+};
 
 export const FormInput = (props: FormInputProps) => {
   const [show, setShow] = useState(false);
-  const [hasAmountBeenTouched, setHasAmountBeenTouched] = useState(false);
+  const [internalAmountTouched, setInternalAmountTouched] = useState(false);
+  const hasAmountBeenTouched =
+    props.hasAmountBeenTouched ?? internalAmountTouched;
+  const setHasAmountBeenTouched =
+    props.setHasAmountBeenTouched ?? setInternalAmountTouched;
+  const categoryOptions = [
+    { key: "car", Primary: CarIconPrimary, Active: CarIconWhite },
+    { key: "water", Primary: WaterIconPrimary, Active: WaterIconWhite },
+    { key: "petrol", Primary: PetrolIconPrimary, Active: PetrolIconWhite },
+    { key: "movie", Primary: MovieIconPrimary, Active: MovieIconWhite },
+    { key: "mobile", Primary: MobileIconPrimary, Active: MobileIconWhite },
+  ];
 
   const onChangeInput = (identifierName: string, inputValue: any) => {
     props.setTransactionInputValues((prevValue) => ({
@@ -137,94 +125,25 @@ export const FormInput = (props: FormInputProps) => {
 
       {props.inputType === "categories" && (
         <View style={styles.categoryContainer}>
-          <CategoryPlaceholder
-            categoryImage={
-              category.name === "car" && category.isActive ? (
-                <CarIconWhite
-                  width={24}
-                  height={24}
-                  alt="car_category_selected"
-                />
-              ) : (
-                <CarIconPrimary width={24} height={24} alt="car_category" />
-              )
-            }
-            categoryName="car"
-            category={category}
-            setTransactionInputValues={props.setTransactionInputValues}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              category.name === "water" && category.isActive ? (
-                <WaterIconWhite
-                  width={24}
-                  height={24}
-                  alt="water_category_selected"
-                />
-              ) : (
-                <WaterIconPrimary width={24} height={24} alt="water_category" />
-              )
-            }
-            categoryName="water"
-            category={category}
-            setTransactionInputValues={props.setTransactionInputValues}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              category.name === "petrol" && category.isActive ? (
-                <PetrolIconWhite
-                  width={24}
-                  height={24}
-                  alt="petrol_category_selected"
-                />
-              ) : (
-                <PetrolIconPrimary
-                  width={24}
-                  height={24}
-                  alt="petrol_category"
-                />
-              )
-            }
-            categoryName="petrol"
-            category={category}
-            setTransactionInputValues={props.setTransactionInputValues}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              category.name === "movie" && category.isActive ? (
-                <MovieIconWhite
-                  width={24}
-                  height={24}
-                  alt="movie_category_selected"
-                />
-              ) : (
-                <MovieIconPrimary width={24} height={24} alt="movie_category" />
-              )
-            }
-            categoryName="movie"
-            category={category}
-            setTransactionInputValues={props.setTransactionInputValues}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              category.name === "mobile" && category.isActive ? (
-                <MobileIconWhite
-                  width={24}
-                  height={24}
-                  alt="mobile_category_selected"
-                />
-              ) : (
-                <MobileIconPrimary
-                  width={24}
-                  height={24}
-                  alt="mobile_category"
-                />
-              )
-            }
-            categoryName="mobile"
-            category={category}
-            setTransactionInputValues={props.setTransactionInputValues}
-          />
+          {categoryOptions.map(({ key, Primary, Active }) => (
+            <CategoryPlaceholder
+              key={key}
+              categoryImage={
+                category.name === key && category.isActive ? (
+                  <Active
+                    width={24}
+                    height={24}
+                    alt={`${key}_category_selected`}
+                  />
+                ) : (
+                  <Primary width={24} height={24} alt={`${key}_category`} />
+                )
+              }
+              categoryName={key}
+              category={category}
+              setTransactionInputValues={props.setTransactionInputValues}
+            />
+          ))}
         </View>
       )}
 
