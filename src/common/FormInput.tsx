@@ -24,7 +24,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { modifyDate } from "../utils/dateModifier";
 import { CategoryPlaceholder } from "./CategoryPlaceholder";
 import { TransactionFormInputProps } from "../types/transaction";
-import { validateAmount } from "../utils/regexValidation";
+import { isValidAmount } from "../utils/regexValidation";
 
 type FormInputProps =
   | {
@@ -96,7 +96,7 @@ export const FormInput = (props: FormInputProps) => {
             style={[
               styles.validationContainer,
               hasAmountBeenTouched &&
-              (validateAmount(String(amount)) || Number(amount) <= 0)
+              (!isValidAmount(String(amount)) || Number(amount) <= 0)
                 ? styles.showValidationText
                 : styles.hideValidationText,
             ]}
@@ -241,7 +241,12 @@ export const FormInput = (props: FormInputProps) => {
             />
           </View>
           <View style={styles.descriptionCounter}>
-            <Text style={styles.descriptionText}>
+            <Text
+              style={[
+                styles.descriptionText,
+                description.length > 90 && styles.descriptionTextLimit,
+              ]}
+            >
               [ {description.length} / 100 ]
             </Text>
           </View>
@@ -258,7 +263,7 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 12,
     marginBottom: 4,
-    fontWeight: 500,
+    fontWeight: "500",
   },
   amountContainer: {
     marginTop: 4,
@@ -273,14 +278,14 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: LightColors.primary,
     width: "10%",
-    fontWeight: 500,
+    fontWeight: "500",
   },
   amountInput: {
     fontSize: 24,
     color: LightColors.primary,
     width: "90%",
     paddingLeft: 16,
-    fontWeight: 700,
+    fontWeight: "700",
   },
   dateContainer: {
     marginTop: 4,
@@ -314,7 +319,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: LightColors.textPrimary,
     width: "100%",
-    fontWeight: 400,
+    fontWeight: "400",
   },
   validationContainer: {
     flexDirection: "row",
@@ -334,8 +339,10 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 12,
-    color: LightColors.error,
     textAlign: "right",
+  },
+  descriptionTextLimit: {
+    color: LightColors.error,
   },
   showValidationText: {
     display: "flex",

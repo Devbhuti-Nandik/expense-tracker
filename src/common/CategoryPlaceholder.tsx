@@ -17,7 +17,10 @@ export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {
   const { categoryImage, categoryName, category, setTransactionInputValues } =
     props;
 
-  const onChangeCategory = (identifierName: string, selectedCategory: any) => {
+  const onChangeCategory = (
+    identifierName: string,
+    selectedCategory: Category
+  ) => {
     setTransactionInputValues((prevValue) => ({
       ...prevValue,
       [identifierName]: selectedCategory,
@@ -28,7 +31,7 @@ export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {
       style={styles.categoryPlaceholderContainer}
       onPress={() =>
         onChangeCategory("category", {
-          id: Math.random().toString(36).substring(2, 9),
+          id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
           name: categoryName,
           isActive: true,
         })
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
   categoryDefault: {
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 25,
     backgroundColor: LightColors.surface,
     flex: 1,
     justifyContent: "center",

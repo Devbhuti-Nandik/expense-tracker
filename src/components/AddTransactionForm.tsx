@@ -18,7 +18,7 @@ export const AddTransactionForm = ({
 }: AddTransactionFormProps) => {
   const [transactionFormInput, setTransactionFormInput] =
     useState<TransactionFormInputProps>({
-      amount: 0,
+      amount: "",
       date: new Date(),
       category: {
         id: "",
@@ -33,7 +33,7 @@ export const AddTransactionForm = ({
 
   const resetTransactionForm = () => {
     setTransactionFormInput({
-      amount: 0,
+      amount: "",
       date: new Date(),
       category: {
         id: "",
@@ -46,7 +46,7 @@ export const AddTransactionForm = ({
   };
   const onSubmit = () => {
     const transaction: Transaction = {
-      amount,
+      amount: Number(amount),
       date: date.toISOString(),
       category,
       description,
@@ -59,9 +59,7 @@ export const AddTransactionForm = ({
   };
 
   const isFormValid =
-    Number(amount) > 0 &&
-    category.name !== "" &&
-    description.trim() !== "";
+    Number(amount) > 0 && category.name !== "" && description.trim() !== "";
 
   return (
     <View style={styles.transactionForm}>
@@ -133,7 +131,7 @@ const styles = StyleSheet.create({
   addTransactionButtonText: {
     fontSize: 16,
     color: LightColors.background,
-    fontWeight: 700,
+    fontWeight: "700",
   },
   disabledButton: {
     color: LightColors.disabledText,

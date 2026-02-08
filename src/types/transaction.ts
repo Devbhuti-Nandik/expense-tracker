@@ -15,7 +15,7 @@ export type TransactionStoreState = {
 };
 
 export type TransactionFormInputProps = {
-  amount: number;
+  amount: string;
   date: Date;
   category: Category;
   description: string;
