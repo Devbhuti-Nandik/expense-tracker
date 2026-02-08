@@ -22,43 +22,43 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dispatch, SetStateAction, useState } from "react";
 import { modifyDate } from "../utils/dateModifier";
 import { CategoryPlaceholder } from "./CategoryPlaceholder";
-import { TransactionInputProps } from "../types/transaction";
+import { TransactionFormInputProps } from "../types/transaction";
 
 type FormInputProps =
   | {
       inputType: "amount";
       label: string;
       inputConfig: any;
-      transactionInputValues: TransactionInputProps;
+      transactionInputValues: TransactionFormInputProps;
       setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionInputProps>
+        SetStateAction<TransactionFormInputProps>
       >;
     }
   | {
       inputType: "date";
       label: string;
       inputConfig: any;
-      transactionInputValues: TransactionInputProps;
+      transactionInputValues: TransactionFormInputProps;
       setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionInputProps>
+        SetStateAction<TransactionFormInputProps>
       >;
     }
   | {
       inputType: "categories";
       label: string;
       inputConfig: any;
-      transactionInputValues: TransactionInputProps;
+      transactionInputValues: TransactionFormInputProps;
       setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionInputProps>
+        SetStateAction<TransactionFormInputProps>
       >;
     }
   | {
       inputType: "description";
       label: string;
       inputConfig: any;
-      transactionInputValues: TransactionInputProps;
+      transactionInputValues: TransactionFormInputProps;
       setTransactionInputValues: Dispatch<
-        SetStateAction<TransactionInputProps>
+        SetStateAction<TransactionFormInputProps>
       >;
     };
 
@@ -72,6 +72,8 @@ export const FormInput = (props: FormInputProps) => {
     }));
   };
 
+  const { amount, date, category, description } = props.transactionInputValues;
+
   return (
     <View style={styles.formInput}>
       <Text style={styles.formLabel}>{props.label}</Text>
@@ -81,7 +83,7 @@ export const FormInput = (props: FormInputProps) => {
           <TextInput
             style={styles.amountInput}
             {...props.inputConfig}
-            value={props.transactionInputValues.amount}
+            value={amount}
             onChangeText={onChangeInput.bind(this, "amount")}
           />
         </View>
@@ -92,7 +94,7 @@ export const FormInput = (props: FormInputProps) => {
           <View style={{ width: "90%" }}>
             {show && (
               <DateTimePicker
-                value={props.transactionInputValues.date}
+                value={date}
                 mode="date"
                 display={Platform.OS === "ios" ? "spinner" : "default"}
                 onChange={(event, selectedDate) => {
@@ -103,7 +105,7 @@ export const FormInput = (props: FormInputProps) => {
                 }}
               />
             )}
-            <Text>{modifyDate(props.transactionInputValues.date)}</Text>
+            <Text>{modifyDate(date)}</Text>
           </View>
           <View style={{ width: "10%" }}>
             <Pressable onPress={() => setShow(true)}>
@@ -117,67 +119,62 @@ export const FormInput = (props: FormInputProps) => {
         <View style={styles.categoryContainer}>
           <CategoryPlaceholder
             categoryImage={
-              props.transactionInputValues.category.name === "car" &&
-              props.transactionInputValues.category.isActive ? (
+              category.name === "car" && category.isActive ? (
                 <CarIconWhite width={24} height={24} />
               ) : (
                 <CarIconPrimary width={24} height={24} />
               )
             }
             categoryName="car"
-            category={props.transactionInputValues.category}
+            category={category}
             setTransactionInputValues={props.setTransactionInputValues}
           />
           <CategoryPlaceholder
             categoryImage={
-              props.transactionInputValues.category.name === "water" &&
-              props.transactionInputValues.category.isActive ? (
+              category.name === "water" && category.isActive ? (
                 <WaterIconWhite width={24} height={24} />
               ) : (
                 <WaterIconPrimary width={24} height={24} />
               )
             }
             categoryName="water"
-            category={props.transactionInputValues.category}
+            category={category}
             setTransactionInputValues={props.setTransactionInputValues}
           />
           <CategoryPlaceholder
             categoryImage={
-              props.transactionInputValues.category.name === "petrol" &&
-              props.transactionInputValues.category.isActive ? (
+              category.name === "petrol" && category.isActive ? (
                 <PetrolIconWhite width={24} height={24} />
               ) : (
                 <PetrolIconPrimary width={24} height={24} />
               )
             }
             categoryName="petrol"
-            category={props.transactionInputValues.category}
+            category={category}
             setTransactionInputValues={props.setTransactionInputValues}
           />
           <CategoryPlaceholder
             categoryImage={
-              props.transactionInputValues.category.name === "movie" &&
-              props.transactionInputValues.category.isActive ? (
+              category.name === "movie" && category.isActive ? (
                 <MovieIconWhite width={24} height={24} />
               ) : (
                 <MovieIconPrimary width={24} height={24} />
               )
             }
             categoryName="movie"
-            category={props.transactionInputValues.category}
+            category={category}
             setTransactionInputValues={props.setTransactionInputValues}
           />
           <CategoryPlaceholder
             categoryImage={
-              props.transactionInputValues.category.name === "mobile" &&
-              props.transactionInputValues.category.isActive ? (
+              category.name === "mobile" && category.isActive ? (
                 <MobileIconWhite width={24} height={24} />
               ) : (
                 <MobileIconPrimary width={24} height={24} />
               )
             }
             categoryName="mobile"
-            category={props.transactionInputValues.category}
+            category={category}
             setTransactionInputValues={props.setTransactionInputValues}
           />
         </View>
@@ -190,7 +187,7 @@ export const FormInput = (props: FormInputProps) => {
             placeholder="Enter your description"
             {...props.inputConfig}
             multiline={true}
-            value={props.transactionInputValues.description}
+            value={description}
             onChangeText={onChangeInput.bind(this, "description")}
           />
         </View>

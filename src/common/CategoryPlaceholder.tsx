@@ -2,13 +2,15 @@ import { View, StyleSheet, Pressable, Text } from "react-native";
 import { LightColors } from "../theme/color";
 import { Category } from "../types/category";
 import { Dispatch, SetStateAction } from "react";
-import { TransactionInputProps } from "../types/transaction";
+import { TransactionFormInputProps } from "../types/transaction";
 
 type CategoryPlaceholderProps = {
   categoryImage: React.ReactNode;
   categoryName: string;
   category: Category;
-  setTransactionInputValues: Dispatch<SetStateAction<TransactionInputProps>>;
+  setTransactionInputValues: Dispatch<
+    SetStateAction<TransactionFormInputProps>
+  >;
 };
 
 export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {

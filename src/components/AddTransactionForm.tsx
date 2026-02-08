@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { FormInput } from "../common/FormInput";
 import { LightColors } from "../theme/color";
-import { Transaction, TransactionInputProps } from "../types/transaction";
+import { Transaction, TransactionFormInputProps } from "../types/transaction";
 import { sanitizeTransactionFormData } from "../utils/helpers";
 import { useTransactionStore } from "../store/useTransactionStore";
 import { useNavigation } from "@react-navigation/native";
@@ -16,8 +16,8 @@ export const AddTransactionForm = ({
   transactionType,
   setTransactionType,
 }: AddTransactionFormProps) => {
-  const [transactionInputValues, setTransactionInputValues] =
-    useState<TransactionInputProps>({
+  const [transactionFormInput, setTransactionFormInput] =
+    useState<TransactionFormInputProps>({
       amount: 0,
       date: new Date(),
       category: {
@@ -31,9 +31,10 @@ export const AddTransactionForm = ({
 
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const navigation = useNavigation();
+  const { amount, date, category, description } = transactionFormInput;
 
   const resetTransactionForm = () => {
-    setTransactionInputValues({
+    setTransactionFormInput({
       amount: 0,
       date: new Date(),
       category: {
@@ -48,10 +49,10 @@ export const AddTransactionForm = ({
   };
   const onSubmit = () => {
     const transaction: Transaction = {
-      amount: transactionInputValues.amount,
-      date: transactionInputValues.date.toISOString(),
-      category: transactionInputValues.category,
-      description: transactionInputValues.description,
+      amount,
+      date: date.toISOString(),
+      category,
+      description,
       type: transactionType,
     };
     const sanitizedTransaction = sanitizeTransactionFormData(transaction);
@@ -62,19 +63,15 @@ export const AddTransactionForm = ({
 
   useEffect(() => {
     if (
-      Number(transactionInputValues.amount) > 0 &&
-      transactionInputValues.category.name !== "" &&
-      transactionInputValues.description.trim() !== ""
+      Number(amount) > 0 &&
+      category.name !== "" &&
+      description.trim() !== ""
     ) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
-  }, [
-    transactionInputValues.amount,
-    transactionInputValues.category,
-    transactionInputValues.description,
-  ]);
+  }, [amount, category, description]);
 
   return (
     <View style={styles.transactionForm}>
@@ -82,29 +79,29 @@ export const AddTransactionForm = ({
         label="Amount"
         inputType="amount"
         inputConfig={{ keyboardType: "decimal-pad" }}
-        transactionInputValues={transactionInputValues}
-        setTransactionInputValues={setTransactionInputValues}
+        transactionInputValues={transactionFormInput}
+        setTransactionInputValues={setTransactionFormInput}
       />
       <FormInput
         label="Date"
         inputType="date"
         inputConfig={{}}
-        transactionInputValues={transactionInputValues}
-        setTransactionInputValues={setTransactionInputValues}
+        transactionInputValues={transactionFormInput}
+        setTransactionInputValues={setTransactionFormInput}
       />
       <FormInput
         label="Categories"
         inputType="categories"
         inputConfig={{}}
-        transactionInputValues={transactionInputValues}
-        setTransactionInputValues={setTransactionInputValues}
+        transactionInputValues={transactionFormInput}
+        setTransactionInputValues={setTransactionFormInput}
       />
       <FormInput
         label="Description"
         inputType="description"
         inputConfig={{}}
-        transactionInputValues={transactionInputValues}
-        setTransactionInputValues={setTransactionInputValues}
+        transactionInputValues={transactionFormInput}
+        setTransactionInputValues={setTransactionFormInput}
       />
       <Pressable
         style={[
