@@ -1,22 +1,34 @@
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import { LightColors } from "../theme/color";
 import { Category } from "../types/category";
+import { Dispatch, SetStateAction } from "react";
+import { TransactionFormInputProps } from "../types/transaction";
 
 type CategoryPlaceholderProps = {
   categoryImage: React.ReactNode;
   categoryName: string;
   category: Category;
-  setCategory: (category: Category) => void;
+  setTransactionInputValues: Dispatch<
+    SetStateAction<TransactionFormInputProps>
+  >;
 };
 
 export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {
-  const { categoryImage, categoryName, category, setCategory } = props;
+  const { categoryImage, categoryName, category, setTransactionInputValues } =
+    props;
+
+  const onChangeCategory = (selectedCategory: Category) => {
+    setTransactionInputValues((prevValue) => ({
+      ...prevValue,
+      category: selectedCategory,
+    }));
+  };
   return (
     <Pressable
       style={styles.categoryPlaceholderContainer}
       onPress={() =>
-        setCategory({
-          id: Math.random().toString(36).substring(2, 9),
+        onChangeCategory({
+          id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
           name: categoryName,
           isActive: true,
         })
@@ -51,7 +63,7 @@ const styles = StyleSheet.create({
   categoryDefault: {
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 25,
     backgroundColor: LightColors.surface,
     flex: 1,
     justifyContent: "center",

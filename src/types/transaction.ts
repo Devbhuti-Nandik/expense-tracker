@@ -13,3 +13,10 @@ export type TransactionStoreState = {
   transactions: Transaction[];
   addTransaction: (transaction: Transaction) => void;
 };
+
+export type TransactionFormInputProps = {
+  amount: string;
+  date: Date;
+  category: Category;
+  description: string;
+};

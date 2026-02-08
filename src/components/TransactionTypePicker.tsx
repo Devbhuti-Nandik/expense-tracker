@@ -52,12 +52,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   transactionTypeDefaultText: {
-    fontWeight: 500,
+    fontWeight: "500",
   },
   transactionTypeActiveBtn: {
     backgroundColor: LightColors.secondary,
-  },
-  transactionTypeActiveText: {
-    color: LightColors.primary,
   },
 });

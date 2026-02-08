@@ -17,58 +17,83 @@ import MovieIconPrimary from "../../assets/icons/movie_primary";
 import MovieIconWhite from "../../assets/icons/movie_white";
 import MobileIconPrimary from "../../assets/icons/mobile_primary";
 import MobileIconWhite from "../../assets/icons/mobile_white";
+import ErrorIcon from "../../assets/icons/error_icon.svg";
 import { LightColors } from "../theme/color";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { modifyDate } from "../utils/dateModifier";
 import { CategoryPlaceholder } from "./CategoryPlaceholder";
-import { Category } from "../types/category";
+import { TransactionFormInputProps } from "../types/transaction";
+import { isValidAmount } from "../utils/regexValidation";
 
-type FormInputProps =
-  | {
-      inputType: "amount";
-      label: string;
-      inputConfig: any;
-      amount: number;
-      setAmount: (amount: number) => void;
-    }
-  | {
-      inputType: "date";
-      label: string;
-      inputConfig: any;
-      date: Date;
-      setDate: (date: Date) => void;
-    }
-  | {
-      inputType: "categories";
-      label: string;
-      inputConfig: any;
-      category: Category;
-      setCategory: (category: Category) => void;
-    }
-  | {
-      inputType: "description";
-      label: string;
-      inputConfig: any;
-      description: string;
-      setDescription: (description: string) => void;
-    };
+type BaseFormInputProps = {
+  label: string;
+  inputConfig: any;
+  transactionInputValues: TransactionFormInputProps;
+  setTransactionInputValues: Dispatch<
+    SetStateAction<TransactionFormInputProps>
+  >;
+  hasAmountBeenTouched?: boolean;
+  setHasAmountBeenTouched?: Dispatch<SetStateAction<boolean>>;
+};
+
+type FormInputProps = BaseFormInputProps & {
+  inputType: "amount" | "date" | "categories" | "description";
+};
 
 export const FormInput = (props: FormInputProps) => {
   const [show, setShow] = useState(false);
+  const [internalAmountTouched, setInternalAmountTouched] = useState(false);
+  const hasAmountBeenTouched =
+    props.hasAmountBeenTouched ?? internalAmountTouched;
+  const setHasAmountBeenTouched =
+    props.setHasAmountBeenTouched ?? setInternalAmountTouched;
+  const categoryOptions = [
+    { key: "car", Primary: CarIconPrimary, Active: CarIconWhite },
+    { key: "water", Primary: WaterIconPrimary, Active: WaterIconWhite },
+    { key: "petrol", Primary: PetrolIconPrimary, Active: PetrolIconWhite },
+    { key: "movie", Primary: MovieIconPrimary, Active: MovieIconWhite },
+    { key: "mobile", Primary: MobileIconPrimary, Active: MobileIconWhite },
+  ];
+
+  const onChangeInput = (identifierName: string, inputValue: any) => {
+    props.setTransactionInputValues((prevValue) => ({
+      ...prevValue,
+      [identifierName]: inputValue,
+    }));
+  };
+
+  const { amount, date, category, description } = props.transactionInputValues;
 
   return (
     <View style={styles.formInput}>
       <Text style={styles.formLabel}>{props.label}</Text>
       {props.inputType === "amount" && (
-        <View style={styles.amountContainer}>
-          <Text style={styles.amountSymbol}>₹</Text>
-          <TextInput
-            style={styles.amountInput}
-            {...props.inputConfig}
-            value={props.amount}
-            onChangeText={props.setAmount}
-          />
+        <View>
+          <View style={styles.amountContainer}>
+            <Text style={styles.amountSymbol}>₹</Text>
+            <TextInput
+              style={styles.amountInput}
+              {...props.inputConfig}
+              value={amount}
+              onChangeText={onChangeInput.bind(this, "amount")}
+              onEndEditing={() => setHasAmountBeenTouched(true)}
+            />
+          </View>
+          <View
+            style={[
+              styles.validationContainer,
+              hasAmountBeenTouched &&
+              (!isValidAmount(String(amount)) || Number(amount) <= 0)
+                ? styles.showValidationText
+                : styles.hideValidationText,
+            ]}
+          >
+            <ErrorIcon height={14} width={14} alt="error" />
+            <Text style={styles.validationText}>
+              Amount must be greater than 0
+            </Text>
+          </View>
         </View>
       )}
       {/* TODO: We need to separate the date and time fields */}
@@ -77,16 +102,18 @@ export const FormInput = (props: FormInputProps) => {
           <View style={{ width: "90%" }}>
             {show && (
               <DateTimePicker
-                value={props.date}
+                value={date}
                 mode="date"
                 display={Platform.OS === "ios" ? "spinner" : "default"}
                 onChange={(event, selectedDate) => {
                   setShow(false);
-                  if (selectedDate) props.setDate(selectedDate);
+                  if (selectedDate) {
+                    onChangeInput("date", selectedDate);
+                  }
                 }}
               />
             )}
-            <Text>{modifyDate(props.date)}</Text>
+            <Text>{modifyDate(date)}</Text>
           </View>
           <View style={{ width: "10%" }}>
             <Pressable onPress={() => setShow(true)}>
@@ -98,79 +125,50 @@ export const FormInput = (props: FormInputProps) => {
 
       {props.inputType === "categories" && (
         <View style={styles.categoryContainer}>
-          <CategoryPlaceholder
-            categoryImage={
-              props.category.name === "car" && props.category.isActive ? (
-                <CarIconWhite width={24} height={24} />
-              ) : (
-                <CarIconPrimary width={24} height={24} />
-              )
-            }
-            categoryName="car"
-            category={props.category}
-            setCategory={props.setCategory}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              props.category.name === "water" && props.category.isActive ? (
-                <WaterIconWhite width={24} height={24} />
-              ) : (
-                <WaterIconPrimary width={24} height={24} />
-              )
-            }
-            categoryName="water"
-            category={props.category}
-            setCategory={props.setCategory}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              props.category.name === "petrol" && props.category.isActive ? (
-                <PetrolIconWhite width={24} height={24} />
-              ) : (
-                <PetrolIconPrimary width={24} height={24} />
-              )
-            }
-            categoryName="petrol"
-            category={props.category}
-            setCategory={props.setCategory}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              props.category.name === "movie" && props.category.isActive ? (
-                <MovieIconWhite width={24} height={24} />
-              ) : (
-                <MovieIconPrimary width={24} height={24} />
-              )
-            }
-            categoryName="movie"
-            category={props.category}
-            setCategory={props.setCategory}
-          />
-          <CategoryPlaceholder
-            categoryImage={
-              props.category.name === "mobile" && props.category.isActive ? (
-                <MobileIconWhite width={24} height={24} />
-              ) : (
-                <MobileIconPrimary width={24} height={24} />
-              )
-            }
-            categoryName="mobile"
-            category={props.category}
-            setCategory={props.setCategory}
-          />
+          {categoryOptions.map(({ key, Primary, Active }) => (
+            <CategoryPlaceholder
+              key={key}
+              categoryImage={
+                category.name === key && category.isActive ? (
+                  <Active
+                    width={24}
+                    height={24}
+                    alt={`${key}_category_selected`}
+                  />
+                ) : (
+                  <Primary width={24} height={24} alt={`${key}_category`} />
+                )
+              }
+              categoryName={key}
+              category={category}
+              setTransactionInputValues={props.setTransactionInputValues}
+            />
+          ))}
         </View>
       )}
 
       {props.inputType === "description" && (
-        <View style={styles.descriptionContainer}>
-          <TextInput
-            style={styles.descriptionInput}
-            placeholder="Enter your description"
-            {...props.inputConfig}
-            multiline={true}
-            value={props.description}
-            onChangeText={props.setDescription}
-          />
+        <View>
+          <View style={styles.descriptionContainer}>
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="Enter your description"
+              {...props.inputConfig}
+              multiline={true}
+              value={description}
+              onChangeText={onChangeInput.bind(this, "description")}
+            />
+          </View>
+          <View style={styles.descriptionCounter}>
+            <Text
+              style={[
+                styles.descriptionText,
+                description.length > 90 && styles.descriptionTextLimit,
+              ]}
+            >
+              [ {description.length} / 100 ]
+            </Text>
+          </View>
         </View>
       )}
     </View>
@@ -184,7 +182,7 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 12,
     marginBottom: 4,
-    fontWeight: 500,
+    fontWeight: "500",
   },
   amountContainer: {
     marginTop: 4,
@@ -199,14 +197,14 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: LightColors.primary,
     width: "10%",
-    fontWeight: 500,
+    fontWeight: "500",
   },
   amountInput: {
     fontSize: 24,
     color: LightColors.primary,
     width: "90%",
     paddingLeft: 16,
-    fontWeight: 700,
+    fontWeight: "700",
   },
   dateContainer: {
     marginTop: 4,
@@ -240,6 +238,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: LightColors.textPrimary,
     width: "100%",
-    fontWeight: 400,
+    fontWeight: "400",
+  },
+  validationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  validationText: {
+    fontSize: 12,
+    color: LightColors.error,
+    marginLeft: 4,
+  },
+  descriptionCounter: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    marginTop: 8,
+  },
+  descriptionText: {
+    fontSize: 12,
+    textAlign: "right",
+  },
+  descriptionTextLimit: {
+    color: LightColors.error,
+  },
+  showValidationText: {
+    display: "flex",
+  },
+  hideValidationText: {
+    display: "none",
   },
 });

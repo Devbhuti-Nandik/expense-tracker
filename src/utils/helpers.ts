@@ -3,7 +3,7 @@ import { Transaction } from "../types/transaction";
 export const sanitizeTransactionFormData = (transaction: Transaction) => {
   const { amount, date, category, description, type } = transaction;
   return {
-    id: Math.random().toString(36).substring(2, 9),
+    id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
     amount: Number(amount),
     date,
     category: {
