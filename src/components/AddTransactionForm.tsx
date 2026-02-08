@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { FormInput } from "../common/FormInput";
 import { LightColors } from "../theme/color";
@@ -27,8 +27,6 @@ export const AddTransactionForm = ({
       },
       description: "",
     });
-  const [isFormValid, setIsFormValid] = useState(false);
-
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const navigation = useNavigation();
   const { amount, date, category, description } = transactionFormInput;
@@ -45,7 +43,6 @@ export const AddTransactionForm = ({
       description: "",
     });
     setTransactionType("expense");
-    setIsFormValid(false);
   };
   const onSubmit = () => {
     const transaction: Transaction = {
@@ -61,24 +58,17 @@ export const AddTransactionForm = ({
     navigation.navigate("Transactions" as never);
   };
 
-  useEffect(() => {
-    if (
-      Number(amount) > 0 &&
-      category.name !== "" &&
-      description.trim() !== ""
-    ) {
-      setIsFormValid(true);
-    } else {
-      setIsFormValid(false);
-    }
-  }, [amount, category, description]);
+  const isFormValid =
+    Number(amount) > 0 &&
+    category.name !== "" &&
+    description.trim() !== "";
 
   return (
     <View style={styles.transactionForm}>
       <FormInput
         label="Amount"
         inputType="amount"
-        inputConfig={{ keyboardType: "decimal-pad" }}
+        inputConfig={{ keyboardType: "decimal-pad", maxLength: 10 }}
         transactionInputValues={transactionFormInput}
         setTransactionInputValues={setTransactionFormInput}
       />
@@ -99,7 +89,7 @@ export const AddTransactionForm = ({
       <FormInput
         label="Description"
         inputType="description"
-        inputConfig={{}}
+        inputConfig={{ autoCorrect: true, maxLength: 100 }}
         transactionInputValues={transactionFormInput}
         setTransactionInputValues={setTransactionFormInput}
       />

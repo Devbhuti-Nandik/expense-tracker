@@ -17,12 +17,14 @@ import MovieIconPrimary from "../../assets/icons/movie_primary";
 import MovieIconWhite from "../../assets/icons/movie_white";
 import MobileIconPrimary from "../../assets/icons/mobile_primary";
 import MobileIconWhite from "../../assets/icons/mobile_white";
+import ErrorIcon from "../../assets/icons/error_icon.svg";
 import { LightColors } from "../theme/color";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dispatch, SetStateAction, useState } from "react";
 import { modifyDate } from "../utils/dateModifier";
 import { CategoryPlaceholder } from "./CategoryPlaceholder";
 import { TransactionFormInputProps } from "../types/transaction";
+import { validateAmount } from "../utils/regexValidation";
 
 type FormInputProps =
   | {
@@ -64,6 +66,7 @@ type FormInputProps =
 
 export const FormInput = (props: FormInputProps) => {
   const [show, setShow] = useState(false);
+  const [hasAmountBeenTouched, setHasAmountBeenTouched] = useState(false);
 
   const onChangeInput = (identifierName: string, inputValue: any) => {
     props.setTransactionInputValues((prevValue) => ({
@@ -78,14 +81,31 @@ export const FormInput = (props: FormInputProps) => {
     <View style={styles.formInput}>
       <Text style={styles.formLabel}>{props.label}</Text>
       {props.inputType === "amount" && (
-        <View style={styles.amountContainer}>
-          <Text style={styles.amountSymbol}>₹</Text>
-          <TextInput
-            style={styles.amountInput}
-            {...props.inputConfig}
-            value={amount}
-            onChangeText={onChangeInput.bind(this, "amount")}
-          />
+        <View>
+          <View style={styles.amountContainer}>
+            <Text style={styles.amountSymbol}>₹</Text>
+            <TextInput
+              style={styles.amountInput}
+              {...props.inputConfig}
+              value={amount}
+              onChangeText={onChangeInput.bind(this, "amount")}
+              onEndEditing={() => setHasAmountBeenTouched(true)}
+            />
+          </View>
+          <View
+            style={[
+              styles.validationContainer,
+              hasAmountBeenTouched &&
+              (validateAmount(String(amount)) || Number(amount) <= 0)
+                ? styles.showValidationText
+                : styles.hideValidationText,
+            ]}
+          >
+            <ErrorIcon height={14} width={14} alt="error" />
+            <Text style={styles.validationText}>
+              Amount must be greater than 0
+            </Text>
+          </View>
         </View>
       )}
       {/* TODO: We need to separate the date and time fields */}
@@ -120,9 +140,13 @@ export const FormInput = (props: FormInputProps) => {
           <CategoryPlaceholder
             categoryImage={
               category.name === "car" && category.isActive ? (
-                <CarIconWhite width={24} height={24} />
+                <CarIconWhite
+                  width={24}
+                  height={24}
+                  alt="car_category_selected"
+                />
               ) : (
-                <CarIconPrimary width={24} height={24} />
+                <CarIconPrimary width={24} height={24} alt="car_category" />
               )
             }
             categoryName="car"
@@ -132,9 +156,13 @@ export const FormInput = (props: FormInputProps) => {
           <CategoryPlaceholder
             categoryImage={
               category.name === "water" && category.isActive ? (
-                <WaterIconWhite width={24} height={24} />
+                <WaterIconWhite
+                  width={24}
+                  height={24}
+                  alt="water_category_selected"
+                />
               ) : (
-                <WaterIconPrimary width={24} height={24} />
+                <WaterIconPrimary width={24} height={24} alt="water_category" />
               )
             }
             categoryName="water"
@@ -144,9 +172,17 @@ export const FormInput = (props: FormInputProps) => {
           <CategoryPlaceholder
             categoryImage={
               category.name === "petrol" && category.isActive ? (
-                <PetrolIconWhite width={24} height={24} />
+                <PetrolIconWhite
+                  width={24}
+                  height={24}
+                  alt="petrol_category_selected"
+                />
               ) : (
-                <PetrolIconPrimary width={24} height={24} />
+                <PetrolIconPrimary
+                  width={24}
+                  height={24}
+                  alt="petrol_category"
+                />
               )
             }
             categoryName="petrol"
@@ -156,9 +192,13 @@ export const FormInput = (props: FormInputProps) => {
           <CategoryPlaceholder
             categoryImage={
               category.name === "movie" && category.isActive ? (
-                <MovieIconWhite width={24} height={24} />
+                <MovieIconWhite
+                  width={24}
+                  height={24}
+                  alt="movie_category_selected"
+                />
               ) : (
-                <MovieIconPrimary width={24} height={24} />
+                <MovieIconPrimary width={24} height={24} alt="movie_category" />
               )
             }
             categoryName="movie"
@@ -168,9 +208,17 @@ export const FormInput = (props: FormInputProps) => {
           <CategoryPlaceholder
             categoryImage={
               category.name === "mobile" && category.isActive ? (
-                <MobileIconWhite width={24} height={24} />
+                <MobileIconWhite
+                  width={24}
+                  height={24}
+                  alt="mobile_category_selected"
+                />
               ) : (
-                <MobileIconPrimary width={24} height={24} />
+                <MobileIconPrimary
+                  width={24}
+                  height={24}
+                  alt="mobile_category"
+                />
               )
             }
             categoryName="mobile"
@@ -181,15 +229,22 @@ export const FormInput = (props: FormInputProps) => {
       )}
 
       {props.inputType === "description" && (
-        <View style={styles.descriptionContainer}>
-          <TextInput
-            style={styles.descriptionInput}
-            placeholder="Enter your description"
-            {...props.inputConfig}
-            multiline={true}
-            value={description}
-            onChangeText={onChangeInput.bind(this, "description")}
-          />
+        <View>
+          <View style={styles.descriptionContainer}>
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="Enter your description"
+              {...props.inputConfig}
+              multiline={true}
+              value={description}
+              onChangeText={onChangeInput.bind(this, "description")}
+            />
+          </View>
+          <View style={styles.descriptionCounter}>
+            <Text style={styles.descriptionText}>
+              [ {description.length} / 100 ]
+            </Text>
+          </View>
         </View>
       )}
     </View>
@@ -260,5 +315,32 @@ const styles = StyleSheet.create({
     color: LightColors.textPrimary,
     width: "100%",
     fontWeight: 400,
+  },
+  validationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  validationText: {
+    fontSize: 12,
+    color: LightColors.error,
+    marginLeft: 4,
+  },
+  descriptionCounter: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    marginTop: 8,
+  },
+  descriptionText: {
+    fontSize: 12,
+    color: LightColors.error,
+    textAlign: "right",
+  },
+  showValidationText: {
+    display: "flex",
+  },
+  hideValidationText: {
+    display: "none",
   },
 });
