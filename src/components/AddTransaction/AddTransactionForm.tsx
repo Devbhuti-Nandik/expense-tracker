@@ -1,10 +1,13 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { FormInput } from "../common/FormInput";
-import { LightColors } from "../theme/color";
-import { Transaction, TransactionFormInputProps } from "../types/transaction";
-import { sanitizeTransactionFormData } from "../utils/helpers";
-import { useTransactionStore } from "../store/useTransactionStore";
+import { FormInput } from "../../common/FormInput";
+import { LightColors } from "../../theme/color";
+import {
+  Transaction,
+  TransactionFormInputProps,
+} from "../../types/transaction";
+import { sanitizeTransactionFormData } from "../../utils/helpers";
+import { useTransactionStore } from "../../store/useTransactionStore";
 import { useNavigation } from "@react-navigation/native";
 
 type AddTransactionFormProps = {

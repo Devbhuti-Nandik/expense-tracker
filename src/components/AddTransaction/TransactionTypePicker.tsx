@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { StyleSheet } from "react-native";
-import { LightColors } from "../theme/color";
+import { LightColors } from "../../theme/color";
 import { Dispatch, SetStateAction } from "react";
 
 type TransactionTypeProps = {

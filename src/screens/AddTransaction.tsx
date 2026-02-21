@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { LightColors } from "../theme/color";
-import { TransactionTypePicker } from "../components/TransactionTypePicker";
-import { AddTransactionForm } from "../components/AddTransactionForm";
+import { TransactionTypePicker } from "../components/AddTransaction/TransactionTypePicker";
+import { AddTransactionForm } from "../components/AddTransaction/AddTransactionForm";
 import { useState } from "react";
 import { Transaction } from "../types/transaction";
 

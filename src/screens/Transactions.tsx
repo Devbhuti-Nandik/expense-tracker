@@ -2,6 +2,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 import { useTransactionStore } from "../store/useTransactionStore";
+import { LightColors } from "../theme/color";
+import { SummaryCard } from "../components/Transactions/SummaryCard";
 
 const Transactions = () => {
   const navigation = useNavigation();
@@ -11,11 +13,7 @@ const Transactions = () => {
   }, [transactions]);
   return (
     <View style={styles.transactionsContainer}>
-      <Text>Transactions screen</Text>
-      <Button
-        onPress={() => navigation.navigate("Edit" as never)}
-        title="Edit transaction"
-      />
+      <SummaryCard />
     </View>
   );
 };
@@ -25,6 +23,6 @@ export default Transactions;
 const styles = StyleSheet.create({
   transactionsContainer: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: LightColors.background,
   },
 });
