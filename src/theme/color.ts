@@ -12,8 +12,6 @@ export const LightColors = {
   inputFocusBorder: "#2563EB",
 
   primary: "#DA5C70",
-  primaryPressed: "#1D4ED8",
-  primaryDisabled: "#93C5FD",
 
   secondary: "#FCD6DE",
 
@@ -23,4 +21,9 @@ export const LightColors = {
   success: "#16A34A",
   error: "#DC2626",
   warning: "#D97706",
+
+  cardColorPrimary: "#F8E4E8",
+  cardColorSecondary: "#F3D6DB",
+
+  black: "#000000",
 };

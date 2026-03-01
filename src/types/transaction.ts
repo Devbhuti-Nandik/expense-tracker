@@ -11,7 +11,11 @@ export type Transaction = {
 
 export type TransactionStoreState = {
   transactions: Transaction[];
+  expenseAmount: number;
+  incomeAmount: number;
   addTransaction: (transaction: Transaction) => void;
+  updateExpenseAmount: (expenseAmount: number) => void;
+  updateIncomeAmount: (incomeAmount: number) => void;
 };
 
 export type TransactionFormInputProps = {
