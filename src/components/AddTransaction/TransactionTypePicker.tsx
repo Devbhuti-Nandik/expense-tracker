@@ -2,6 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { StyleSheet } from "react-native";
 import { LightColors } from "../../theme/color";
 import { Dispatch, SetStateAction } from "react";
+import { TRANSACTION_TYPE } from "../../constants/constants";
 
 type TransactionTypeProps = {
   transactionType: "expense" | "income";
@@ -17,18 +18,20 @@ export const TransactionTypePicker = ({
       <Pressable
         style={[
           styles.transactionTypeDefaultBtn,
-          transactionType === "expense" && styles.transactionTypeActiveBtn,
+          transactionType === TRANSACTION_TYPE.EXPENSE &&
+            styles.transactionTypeActiveBtn,
         ]}
-        onPress={() => setTransactionType("expense")}
+        onPress={() => setTransactionType(TRANSACTION_TYPE.EXPENSE)}
       >
         <Text style={styles.transactionTypeDefaultText}>Expense</Text>
       </Pressable>
       <Pressable
         style={[
           styles.transactionTypeDefaultBtn,
-          transactionType === "income" && styles.transactionTypeActiveBtn,
+          transactionType === TRANSACTION_TYPE.INCOME &&
+            styles.transactionTypeActiveBtn,
         ]}
-        onPress={() => setTransactionType("income")}
+        onPress={() => setTransactionType(TRANSACTION_TYPE.INCOME)}
       >
         <Text style={styles.transactionTypeDefaultText}>Income</Text>
       </Pressable>

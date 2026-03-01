@@ -3,8 +3,14 @@ import { LightColors } from "../../theme/color";
 import DownArrow from "../../../assets/icons/down_arrow.svg";
 import UpArrow from "../../../assets/icons/up_arrow.svg";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTransactionStore } from "../../store/useTransactionStore";
 
 export const SummaryCard = () => {
+  const totalIncomeAmount = useTransactionStore((state) => state.incomeAmount);
+  const totalExpenseAmount = useTransactionStore(
+    (state) => state.expenseAmount
+  );
+
   return (
     <View style={styles.summaryCardWrapper}>
       <LinearGradient
@@ -22,7 +28,10 @@ export const SummaryCard = () => {
           <View style={styles.headingContainer}>
             <View style={styles.textContainer}>
               <Text style={styles.currencySymbolBalance}>₹</Text>
-              <Text style={styles.totalBalanceText}> 5000</Text>
+              <Text style={styles.totalBalanceText}>
+                {" "}
+                {totalIncomeAmount - totalExpenseAmount}
+              </Text>
             </View>
 
             <Pressable style={styles.addAmountBtn}>
@@ -35,7 +44,10 @@ export const SummaryCard = () => {
             <Text>Expense</Text>
             <View style={styles.textContainer}>
               <Text style={[styles.currencySymbolExpense]}>₹</Text>
-              <Text style={styles.expenseBalanceText}> 400</Text>
+              <Text style={styles.expenseBalanceText}>
+                {" "}
+                {totalExpenseAmount}
+              </Text>
               <DownArrow width={24} height={24} />
             </View>
           </View>
@@ -43,7 +55,7 @@ export const SummaryCard = () => {
             <Text>Income</Text>
             <View style={styles.textContainer}>
               <Text style={[styles.currencySymbolIncome]}>₹</Text>
-              <Text style={styles.incomeBalanceText}> 600</Text>
+              <Text style={styles.incomeBalanceText}> {totalIncomeAmount}</Text>
               <UpArrow width={24} height={24} />
             </View>
           </View>

@@ -4,10 +4,12 @@ import { TransactionTypePicker } from "../components/AddTransaction/TransactionT
 import { AddTransactionForm } from "../components/AddTransaction/AddTransactionForm";
 import { useState } from "react";
 import { Transaction } from "../types/transaction";
+import { TRANSACTION_TYPE } from "../constants/constants";
 
 const AddTransaction = () => {
-  const [transactionType, setTransactionType] =
-    useState<Transaction["type"]>("expense");
+  const [transactionType, setTransactionType] = useState<Transaction["type"]>(
+    TRANSACTION_TYPE.EXPENSE
+  );
 
   return (
     <View style={styles.addTransactionContainer}>

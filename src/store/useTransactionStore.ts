@@ -10,9 +10,17 @@ import { Transaction, TransactionStoreState } from "../types/transaction";
  */
 export const useTransactionStore = create<TransactionStoreState>((set) => ({
   transactions: [],
+  expenseAmount: 0,
+  incomeAmount: 0,
   addTransaction: (transaction: Transaction) => {
     set((state) => ({
       transactions: [...state.transactions, transaction],
     }));
+  },
+  updateExpenseAmount: (expenseAmount: number) => {
+    set((state) => ({ expenseAmount: state.expenseAmount + expenseAmount }));
+  },
+  updateIncomeAmount: (incomeAmount: number) => {
+    set((state) => ({ incomeAmount: (state.incomeAmount += incomeAmount) }));
   },
 }));

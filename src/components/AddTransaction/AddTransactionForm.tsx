@@ -9,6 +9,7 @@ import {
 import { sanitizeTransactionFormData } from "../../utils/helpers";
 import { useTransactionStore } from "../../store/useTransactionStore";
 import { useNavigation } from "@react-navigation/native";
+import { TRANSACTION_TYPE } from "../../constants/constants";
 
 type AddTransactionFormProps = {
   transactionType: "expense" | "income";
@@ -32,8 +33,27 @@ export const AddTransactionForm = ({
     });
   const [hasAmountBeenTouched, setHasAmountBeenTouched] = useState(false);
   const addTransaction = useTransactionStore((state) => state.addTransaction);
+  const updateExpenseAmount = useTransactionStore(
+    (state) => state.updateExpenseAmount
+  );
+  const updateIncomeAmount = useTransactionStore(
+    (state) => state.updateIncomeAmount
+  );
   const navigation = useNavigation();
   const { amount, date, category, description } = transactionFormInput;
+
+  const storeAmountByType = (amount: number, type: string) => {
+    switch (type) {
+      case TRANSACTION_TYPE.EXPENSE:
+        updateExpenseAmount(amount);
+        break;
+      case TRANSACTION_TYPE.INCOME:
+        updateIncomeAmount(amount);
+        break;
+      default:
+        console.log("Wrong transaction type.");
+    }
+  };
 
   const resetTransactionForm = () => {
     setTransactionFormInput({
@@ -46,7 +66,7 @@ export const AddTransactionForm = ({
       },
       description: "",
     });
-    setTransactionType("expense");
+    setTransactionType(TRANSACTION_TYPE.EXPENSE);
     setHasAmountBeenTouched(false);
   };
   const onSubmit = () => {
@@ -59,6 +79,7 @@ export const AddTransactionForm = ({
     };
     const sanitizedTransaction = sanitizeTransactionFormData(transaction);
     addTransaction(sanitizedTransaction);
+    storeAmountByType(sanitizedTransaction.amount, sanitizedTransaction.type);
     resetTransactionForm();
     navigation.navigate("Transactions" as never);
   };
