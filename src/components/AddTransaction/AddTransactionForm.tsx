@@ -1,15 +1,20 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { FormInput } from "../common/FormInput";
-import { LightColors } from "../theme/color";
-import { Transaction, TransactionFormInputProps } from "../types/transaction";
-import { sanitizeTransactionFormData } from "../utils/helpers";
-import { useTransactionStore } from "../store/useTransactionStore";
+import { FormInput } from "../../common/FormInput";
+import { LightColors } from "../../theme/color";
+import {
+  Transaction,
+  TransactionFormInputProps,
+  TransactionType,
+} from "../../types/transaction";
+import { sanitizeTransactionFormData } from "../../utils/helpers";
+import { useTransactionStore } from "../../store/useTransactionStore";
 import { useNavigation } from "@react-navigation/native";
+import { TRANSACTION_TYPE } from "../../constants/constants";
 
 type AddTransactionFormProps = {
-  transactionType: "expense" | "income";
-  setTransactionType: Dispatch<SetStateAction<"expense" | "income">>;
+  transactionType: TransactionType;
+  setTransactionType: Dispatch<SetStateAction<TransactionType>>;
 };
 
 export const AddTransactionForm = ({
@@ -24,13 +29,33 @@ export const AddTransactionForm = ({
         id: "",
         name: "",
         isActive: false,
+        icon: "",
       },
       description: "",
     });
   const [hasAmountBeenTouched, setHasAmountBeenTouched] = useState(false);
   const addTransaction = useTransactionStore((state) => state.addTransaction);
+  const updateExpenseAmount = useTransactionStore(
+    (state) => state.updateExpenseAmount
+  );
+  const updateIncomeAmount = useTransactionStore(
+    (state) => state.updateIncomeAmount
+  );
   const navigation = useNavigation();
   const { amount, date, category, description } = transactionFormInput;
+
+  const storeAmountByType = (amount: number, type: string) => {
+    switch (type) {
+      case TRANSACTION_TYPE.EXPENSE:
+        updateExpenseAmount(amount);
+        break;
+      case TRANSACTION_TYPE.INCOME:
+        updateIncomeAmount(amount);
+        break;
+      default:
+        throw new Error(`Invalid transaction type: ${type}`); // TODO: Use logger
+    }
+  };
 
   const resetTransactionForm = () => {
     setTransactionFormInput({
@@ -40,14 +65,16 @@ export const AddTransactionForm = ({
         id: "",
         name: "",
         isActive: false,
+        icon: "",
       },
       description: "",
     });
-    setTransactionType("expense");
+    setTransactionType(TRANSACTION_TYPE.EXPENSE);
     setHasAmountBeenTouched(false);
   };
   const onSubmit = () => {
     const transaction: Transaction = {
+      id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
       amount: Number(amount),
       date: date.toISOString(),
       category,
@@ -56,6 +83,7 @@ export const AddTransactionForm = ({
     };
     const sanitizedTransaction = sanitizeTransactionFormData(transaction);
     addTransaction(sanitizedTransaction);
+    storeAmountByType(sanitizedTransaction.amount, sanitizedTransaction.type);
     resetTransactionForm();
     navigation.navigate("Transactions" as never);
   };

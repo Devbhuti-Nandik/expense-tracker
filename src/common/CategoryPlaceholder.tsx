@@ -31,6 +31,7 @@ export const CategoryPlaceholder = (props: CategoryPlaceholderProps) => {
           id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
           name: categoryName,
           isActive: true,
+          icon: categoryImage,
         })
       }
     >

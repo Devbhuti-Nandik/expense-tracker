@@ -1,21 +1,39 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTransactionStore } from "../store/useTransactionStore";
+import { LightColors } from "../theme/color";
+import { TransactionsHistory } from "../components/Transactions/TransactionsHistory";
+import { useEffect, useState } from "react";
+import { TransactionFilterType } from "../types/transaction";
+import { TRANSACTION_FILTERS } from "../constants/constants";
+import { TransactionTypePicker } from "../components/AddTransaction/TransactionTypePicker";
 
 const Transactions = () => {
   const navigation = useNavigation();
   const transactions = useTransactionStore((state) => state.transactions);
+  const [transactionType, setTransactionType] = useState<TransactionFilterType>(
+    TRANSACTION_FILTERS.ALL
+  );
+  const [filteredTransactions, setFilteredTransactions] =
+    useState(transactions);
+
   useEffect(() => {
-    console.log("transactions: ", transactions);
-  }, [transactions]);
+    let filteredData;
+    if (transactionType === TRANSACTION_FILTERS.ALL) {
+      setFilteredTransactions(transactions);
+      return;
+    }
+    filteredData = transactions.filter((item) => item.type === transactionType);
+    setFilteredTransactions(filteredData);
+  }, [transactionType, transactions]);
   return (
     <View style={styles.transactionsContainer}>
-      <Text>Transactions screen</Text>
-      <Button
-        onPress={() => navigation.navigate("Edit" as never)}
-        title="Edit transaction"
+      <TransactionTypePicker
+        transactionType={transactionType}
+        setTransactionType={setTransactionType}
+        pickerType="transaction_filter"
       />
+      <TransactionsHistory transactions={filteredTransactions} />
     </View>
   );
 };
@@ -25,6 +43,6 @@ export default Transactions;
 const styles = StyleSheet.create({
   transactionsContainer: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: LightColors.background,
   },
 });

@@ -1,9 +1,12 @@
 import { Category } from "./category";
 
+export type TransactionType = "income" | "expense";
+export type TransactionFilterType = "all" | TransactionType;
+
 export type Transaction = {
-  id?: string;
+  id: string;
   amount: number;
-  type: "income" | "expense";
+  type: TransactionType;
   date: string;
   category: Category;
   description: string;
@@ -11,7 +14,11 @@ export type Transaction = {
 
 export type TransactionStoreState = {
   transactions: Transaction[];
+  expenseAmount: number;
+  incomeAmount: number;
   addTransaction: (transaction: Transaction) => void;
+  updateExpenseAmount: (expenseAmount: number) => void;
+  updateIncomeAmount: (incomeAmount: number) => void;
 };
 
 export type TransactionFormInputProps = {
