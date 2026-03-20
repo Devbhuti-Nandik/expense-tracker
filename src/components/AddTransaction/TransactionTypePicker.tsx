@@ -5,8 +5,8 @@ import { Dispatch, SetStateAction } from "react";
 import { TRANSACTION_TYPE } from "../../constants/constants";
 
 type TransactionTypeProps = {
-  transactionType: "expense" | "income";
-  setTransactionType: Dispatch<SetStateAction<"expense" | "income">>;
+  transactionType: "all" | "expense" | "income";
+  setTransactionType: Dispatch<SetStateAction<"all" | "expense" | "income">>;
 };
 
 export const TransactionTypePicker = ({
@@ -15,6 +15,16 @@ export const TransactionTypePicker = ({
 }: TransactionTypeProps) => {
   return (
     <View style={styles.transactionTypePicker}>
+      <Pressable
+        style={[
+          styles.transactionTypeDefaultBtn,
+          transactionType === TRANSACTION_TYPE.ALL &&
+            styles.transactionTypeActiveBtn,
+        ]}
+        onPress={() => setTransactionType(TRANSACTION_TYPE.ALL)}
+      >
+        <Text style={styles.transactionTypeDefaultText}>All</Text>
+      </Pressable>
       <Pressable
         style={[
           styles.transactionTypeDefaultBtn,
@@ -45,7 +55,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     marginHorizontal: 28,
-    marginVertical: 8,
+    marginVertical: 4,
     maxHeight: 70,
     alignItems: "center",
   },

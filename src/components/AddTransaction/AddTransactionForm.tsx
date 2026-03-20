@@ -12,8 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 import { TRANSACTION_TYPE } from "../../constants/constants";
 
 type AddTransactionFormProps = {
-  transactionType: "expense" | "income";
-  setTransactionType: Dispatch<SetStateAction<"expense" | "income">>;
+  transactionType: "all" | "expense" | "income";
+  setTransactionType: Dispatch<SetStateAction<"all" | "expense" | "income">>;
 };
 
 export const AddTransactionForm = ({
@@ -28,6 +28,7 @@ export const AddTransactionForm = ({
         id: "",
         name: "",
         isActive: false,
+        icon: "",
       },
       description: "",
     });
@@ -51,7 +52,7 @@ export const AddTransactionForm = ({
         updateIncomeAmount(amount);
         break;
       default:
-        console.log("Wrong transaction type.");
+        console.log("Wrong transaction type."); // TODO: Use logger
     }
   };
 
@@ -63,6 +64,7 @@ export const AddTransactionForm = ({
         id: "",
         name: "",
         isActive: false,
+        icon: "",
       },
       description: "",
     });

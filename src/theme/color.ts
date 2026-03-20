@@ -26,4 +26,5 @@ export const LightColors = {
   cardColorSecondary: "#F3D6DB",
 
   black: "#000000",
+  lightGrey: "#ACADAC",
 };

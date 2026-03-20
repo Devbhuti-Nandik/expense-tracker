@@ -1,3 +1,4 @@
+import { days } from "../constants/constants";
 import { Transaction } from "../types/transaction";
 
 /**
@@ -14,6 +15,7 @@ export const sanitizeTransactionFormData = (transaction: Transaction) => {
     category: {
       id: category.id,
       name: category.name,
+      icon: category.icon,
     },
     description: description.trim(),
     type,
@@ -47,4 +49,30 @@ export const groupTransactionsByDate = (transactions: Transaction[]) => {
     acc[date].push(transaction);
     return acc;
   }, {} as Record<string, Transaction[]>);
+};
+
+/**
+ * Build transaction sections by date
+ * @param transactions - Array of transactions
+ * @returns Array of transaction sections
+ */
+export const buildTransactionSection = (transactions: Transaction[]) => {
+  const groupedTransactions = groupTransactionsByDate(transactions);
+  return Object.keys(groupedTransactions)
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+    .map((date) => ({
+      title: date.split("-").reverse().join("-"), // YYYY-MM-DD to DD-MM-YYYY
+      data: groupedTransactions[date],
+    }));
+};
+
+/*
+ * Extract day from section title
+ * @param title - section title
+ * @returns day
+ */
+export const extractDay = (title: string) => {
+  const date = new Date(title);
+  const day = days[date.getDay()];
+  return day;
 };
