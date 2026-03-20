@@ -4,14 +4,14 @@ import { useTransactionStore } from "../store/useTransactionStore";
 import { LightColors } from "../theme/color";
 import { TransactionsHistory } from "../components/Transactions/TransactionsHistory";
 import { useEffect, useState } from "react";
-import { Transaction } from "../types/transaction";
-import { TRANSACTION_FILTERS, TRANSACTION_TYPE } from "../constants/constants";
+import { TransactionFilterType } from "../types/transaction";
+import { TRANSACTION_FILTERS } from "../constants/constants";
 import { TransactionTypePicker } from "../components/AddTransaction/TransactionTypePicker";
 
 const Transactions = () => {
   const navigation = useNavigation();
   const transactions = useTransactionStore((state) => state.transactions);
-  const [transactionType, setTransactionType] = useState<Transaction["type"]>(
+  const [transactionType, setTransactionType] = useState<TransactionFilterType>(
     TRANSACTION_FILTERS.ALL
   );
   const [filteredTransactions, setFilteredTransactions] =
@@ -25,7 +25,7 @@ const Transactions = () => {
     }
     filteredData = transactions.filter((item) => item.type === transactionType);
     setFilteredTransactions(filteredData);
-  }, [transactionType]);
+  }, [transactionType, transactions]);
   return (
     <View style={styles.transactionsContainer}>
       <TransactionTypePicker

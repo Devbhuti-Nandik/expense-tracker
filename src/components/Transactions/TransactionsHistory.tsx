@@ -8,6 +8,7 @@ import {
 import { LightColors } from "../../theme/color";
 import { Transaction } from "../../types/transaction";
 import { buildTransactionSection, extractDay } from "../../utils/helpers";
+import { NoTransactions } from "./ZeroStateTransaction";
 
 type TransactionsHistoryProps = {
   transactions: Transaction[];
@@ -110,6 +111,7 @@ export const TransactionsHistory = ({
 
   return (
     <View style={styles.transactionsHistoryContainer}>
+      {transactions.length === 0 && <NoTransactions />}
       <SectionList
         sections={transactionsSectionsData}
         keyExtractor={(item, index) => extractKey(item, index)}

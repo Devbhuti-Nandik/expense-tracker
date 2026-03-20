@@ -1,9 +1,12 @@
 import { Category } from "./category";
 
+export type TransactionType = "income" | "expense";
+export type TransactionFilterType = "all" | TransactionType;
+
 export type Transaction = {
   id: string;
   amount: number;
-  type: "all" | "income" | "expense";
+  type: TransactionType;
   date: string;
   category: Category;
   description: string;

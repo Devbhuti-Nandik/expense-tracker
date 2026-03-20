@@ -21,6 +21,6 @@ export const useTransactionStore = create<TransactionStoreState>((set) => ({
     set((state) => ({ expenseAmount: state.expenseAmount + expenseAmount }));
   },
   updateIncomeAmount: (incomeAmount: number) => {
-    set((state) => ({ incomeAmount: (state.incomeAmount += incomeAmount) }));
+    set((state) => ({ incomeAmount: state.incomeAmount + incomeAmount }));
   },
 }));

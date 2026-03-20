@@ -7,11 +7,22 @@ import {
   TRANSACTION_TYPE,
 } from "../../constants/constants";
 
-type TransactionTypeProps = {
-  transactionType: "all" | "expense" | "income";
-  setTransactionType: Dispatch<SetStateAction<"all" | "expense" | "income">>;
-  pickerType: string;
+type TransactionPickerType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
+type TransactionFilterType = "all" | TransactionPickerType;
+
+type TransactionTypeFilterProps = {
+  pickerType: "transaction_filter";
+  transactionType: TransactionFilterType;
+  setTransactionType: Dispatch<SetStateAction<TransactionFilterType>>;
 };
+
+type TransactionTypePickerProps = {
+  pickerType: "transaction_picker";
+  transactionType: TransactionPickerType;
+  setTransactionType: Dispatch<SetStateAction<TransactionPickerType>>;
+};
+
+type TransactionTypeProps = TransactionTypeFilterProps | TransactionTypePickerProps;
 
 export const TransactionTypePicker = ({
   transactionType,

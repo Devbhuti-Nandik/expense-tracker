@@ -3,11 +3,11 @@ import { LightColors } from "../theme/color";
 import { TransactionTypePicker } from "../components/AddTransaction/TransactionTypePicker";
 import { AddTransactionForm } from "../components/AddTransaction/AddTransactionForm";
 import { useState } from "react";
-import { Transaction } from "../types/transaction";
+import { TransactionType } from "../types/transaction";
 import { TRANSACTION_TYPE } from "../constants/constants";
 
 const AddTransaction = () => {
-  const [transactionType, setTransactionType] = useState<Transaction["type"]>(
+  const [transactionType, setTransactionType] = useState<TransactionType>(
     TRANSACTION_TYPE.EXPENSE
   );
 

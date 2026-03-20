@@ -5,6 +5,7 @@ import { LightColors } from "../../theme/color";
 import {
   Transaction,
   TransactionFormInputProps,
+  TransactionType,
 } from "../../types/transaction";
 import { sanitizeTransactionFormData } from "../../utils/helpers";
 import { useTransactionStore } from "../../store/useTransactionStore";
@@ -12,8 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import { TRANSACTION_TYPE } from "../../constants/constants";
 
 type AddTransactionFormProps = {
-  transactionType: "all" | "expense" | "income";
-  setTransactionType: Dispatch<SetStateAction<"all" | "expense" | "income">>;
+  transactionType: TransactionType;
+  setTransactionType: Dispatch<SetStateAction<TransactionType>>;
 };
 
 export const AddTransactionForm = ({
