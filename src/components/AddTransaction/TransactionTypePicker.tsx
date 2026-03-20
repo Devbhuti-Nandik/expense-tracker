@@ -2,29 +2,36 @@ import { View, Text, Pressable } from "react-native";
 import { StyleSheet } from "react-native";
 import { LightColors } from "../../theme/color";
 import { Dispatch, SetStateAction } from "react";
-import { TRANSACTION_TYPE } from "../../constants/constants";
+import {
+  TRANSACTION_FILTERS,
+  TRANSACTION_TYPE,
+} from "../../constants/constants";
 
 type TransactionTypeProps = {
   transactionType: "all" | "expense" | "income";
   setTransactionType: Dispatch<SetStateAction<"all" | "expense" | "income">>;
+  pickerType: string;
 };
 
 export const TransactionTypePicker = ({
   transactionType,
   setTransactionType,
+  pickerType,
 }: TransactionTypeProps) => {
   return (
     <View style={styles.transactionTypePicker}>
-      <Pressable
-        style={[
-          styles.transactionTypeDefaultBtn,
-          transactionType === TRANSACTION_TYPE.ALL &&
-            styles.transactionTypeActiveBtn,
-        ]}
-        onPress={() => setTransactionType(TRANSACTION_TYPE.ALL)}
-      >
-        <Text style={styles.transactionTypeDefaultText}>All</Text>
-      </Pressable>
+      {pickerType === "transaction_filter" && (
+        <Pressable
+          style={[
+            styles.transactionTypeDefaultBtn,
+            transactionType === TRANSACTION_FILTERS.ALL &&
+              styles.transactionTypeActiveBtn,
+          ]}
+          onPress={() => setTransactionType(TRANSACTION_FILTERS.ALL)}
+        >
+          <Text style={styles.transactionTypeDefaultText}>All</Text>
+        </Pressable>
+      )}
       <Pressable
         style={[
           styles.transactionTypeDefaultBtn,

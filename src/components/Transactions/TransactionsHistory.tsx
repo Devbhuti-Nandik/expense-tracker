@@ -32,6 +32,40 @@ type TransactionAmountDetailProps = {
   transactionType: string;
 };
 
+const TransactionDetailTile = ({
+  icon,
+  title,
+  categoryName,
+}: TransactionDetailTileProps) => {
+  return (
+    <View style={styles.transactionDetailTileContainer}>
+      <View style={styles.transactionDetailTileCategoryIcon}>{icon}</View>
+      <View>
+        <Text style={styles.transactionDetailTileTitle}>{title}</Text>
+        <Text style={styles.transactionDetailTileSubtitle}>{categoryName}</Text>
+      </View>
+    </View>
+  );
+};
+
+const TransactionAmountDetail = ({
+  amount,
+  transactionType,
+}: TransactionAmountDetailProps) => {
+  return (
+    <View>
+      {transactionType === "income" ? (
+        <Text style={styles.incomeAmount}>+₹{amount}</Text>
+      ) : (
+        <Text style={styles.expenseAmount}>-₹{amount}</Text>
+      )}
+      <Text style={styles.transactionDetailTileTransactionType}>
+        {transactionType}
+      </Text>
+    </View>
+  );
+};
+
 export const TransactionsHistory = ({
   transactions,
 }: TransactionsHistoryProps) => {
@@ -54,42 +88,6 @@ export const TransactionsHistory = ({
         </View>
         <Text style={styles.sectionTitleMonthYear}>{monthYearValue}</Text>
         <View style={styles.sectionTitleLine}></View>
-      </View>
-    );
-  };
-
-  const TransactionDetailTile = ({
-    icon,
-    title,
-    categoryName,
-  }: TransactionDetailTileProps) => {
-    return (
-      <View style={styles.transactionDetailTileContainer}>
-        <View style={styles.transactionDetailTileCategoryIcon}>{icon}</View>
-        <View>
-          <Text style={styles.transactionDetailTileTitle}>{title}</Text>
-          <Text style={styles.transactionDetailTileSubtitle}>
-            {categoryName}
-          </Text>
-        </View>
-      </View>
-    );
-  };
-
-  const TransactionAmountDetail = ({
-    amount,
-    transactionType,
-  }: TransactionAmountDetailProps) => {
-    return (
-      <View>
-        {transactionType === "income" ? (
-          <Text style={styles.incomeAmount}>+₹{amount}</Text>
-        ) : (
-          <Text style={styles.expenseAmount}>-₹{amount}</Text>
-        )}
-        <Text style={styles.transactionDetailTileTransactionType}>
-          {transactionType}
-        </Text>
       </View>
     );
   };
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
   },
   sectionTitleDay: {
     fontSize: 16,
-    fontWeight: 500,
+    fontWeight: "500",
   },
   sectionTitleWeekContainer: {
     paddingHorizontal: 4,
@@ -179,7 +177,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   transactionDetailTileTitle: {
-    fontWeight: 500,
+    fontWeight: "500",
     color: LightColors.black,
     fontSize: 14,
     textTransform: "capitalize",
@@ -192,13 +190,14 @@ const styles = StyleSheet.create({
   incomeAmount: {
     color: LightColors.success,
     textAlign: "right",
-    fontWeight: 500,
-    fontSize: 14,
+    fontWeight: "500",
+    fontSize: 16,
   },
   expenseAmount: {
     color: LightColors.error,
     textAlign: "right",
-    fontWeight: 500,
+    fontWeight: "500",
+    fontSize: 16,
   },
   transactionDetailTileTransactionType: {
     color: LightColors.lightGrey,

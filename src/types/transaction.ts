@@ -1,7 +1,7 @@
 import { Category } from "./category";
 
 export type Transaction = {
-  id?: string;
+  id: string;
   amount: number;
   type: "all" | "income" | "expense";
   date: string;

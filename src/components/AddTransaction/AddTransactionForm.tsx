@@ -52,7 +52,7 @@ export const AddTransactionForm = ({
         updateIncomeAmount(amount);
         break;
       default:
-        console.log("Wrong transaction type."); // TODO: Use logger
+        throw new Error(`Invalid transaction type: ${type}`); // TODO: Use logger
     }
   };
 
@@ -73,6 +73,7 @@ export const AddTransactionForm = ({
   };
   const onSubmit = () => {
     const transaction: Transaction = {
+      id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
       amount: Number(amount),
       date: date.toISOString(),
       category,

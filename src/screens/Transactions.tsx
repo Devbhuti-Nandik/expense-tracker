@@ -2,25 +2,24 @@ import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { useTransactionStore } from "../store/useTransactionStore";
 import { LightColors } from "../theme/color";
-import { SummaryCard } from "../components/Transactions/SummaryCard";
 import { TransactionsHistory } from "../components/Transactions/TransactionsHistory";
 import { useEffect, useState } from "react";
 import { Transaction } from "../types/transaction";
-import { TRANSACTION_TYPE } from "../constants/constants";
+import { TRANSACTION_FILTERS, TRANSACTION_TYPE } from "../constants/constants";
 import { TransactionTypePicker } from "../components/AddTransaction/TransactionTypePicker";
 
 const Transactions = () => {
   const navigation = useNavigation();
   const transactions = useTransactionStore((state) => state.transactions);
   const [transactionType, setTransactionType] = useState<Transaction["type"]>(
-    TRANSACTION_TYPE.ALL
+    TRANSACTION_FILTERS.ALL
   );
   const [filteredTransactions, setFilteredTransactions] =
     useState(transactions);
 
   useEffect(() => {
     let filteredData;
-    if (transactionType === TRANSACTION_TYPE.ALL) {
+    if (transactionType === TRANSACTION_FILTERS.ALL) {
       setFilteredTransactions(transactions);
       return;
     }
@@ -32,9 +31,8 @@ const Transactions = () => {
       <TransactionTypePicker
         transactionType={transactionType}
         setTransactionType={setTransactionType}
+        pickerType="transaction_filter"
       />
-      {/* TODO: Change the UI of Summary Card completely */}
-      <SummaryCard />
       <TransactionsHistory transactions={filteredTransactions} />
     </View>
   );

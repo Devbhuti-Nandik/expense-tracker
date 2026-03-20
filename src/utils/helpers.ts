@@ -1,4 +1,4 @@
-import { days } from "../constants/constants";
+import { WEEKDAY_ABBREVIATIONS } from "../constants/constants";
 import { Transaction } from "../types/transaction";
 
 /**
@@ -7,9 +7,9 @@ import { Transaction } from "../types/transaction";
  * @returns Sanitized transaction object
  */
 export const sanitizeTransactionFormData = (transaction: Transaction) => {
-  const { amount, date, category, description, type } = transaction;
+  const { id, amount, date, category, description, type } = transaction;
   return {
-    id: Math.random().toString(36).substring(2, 9), // TODO: Use uuidv4
+    id,
     amount: Number(amount),
     date,
     category: {
@@ -73,6 +73,6 @@ export const buildTransactionSection = (transactions: Transaction[]) => {
  */
 export const extractDay = (title: string) => {
   const date = new Date(title);
-  const day = days[date.getDay()];
+  const day = WEEKDAY_ABBREVIATIONS[date.getDay()];
   return day;
 };

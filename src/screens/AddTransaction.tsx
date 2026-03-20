@@ -17,6 +17,7 @@ const AddTransaction = () => {
       <TransactionTypePicker
         transactionType={transactionType}
         setTransactionType={setTransactionType}
+        pickerType="transaction_picker"
       />
       <AddTransactionForm
         transactionType={transactionType}
