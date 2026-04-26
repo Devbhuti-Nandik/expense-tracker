@@ -17,6 +17,7 @@ export type TransactionStoreState = {
   expenseAmount: number;
   incomeAmount: number;
   addTransaction: (transaction: Transaction) => void;
+  deleteTransaction: (transactionId: string) => void;
   updateExpenseAmount: (expenseAmount: number) => void;
   updateIncomeAmount: (incomeAmount: number) => void;
 };

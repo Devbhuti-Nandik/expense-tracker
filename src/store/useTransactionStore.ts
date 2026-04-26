@@ -17,6 +17,13 @@ export const useTransactionStore = create<TransactionStoreState>((set) => ({
       transactions: [...state.transactions, transaction],
     }));
   },
+  deleteTransaction: (transactionId: string) => {
+    set((state) => ({
+      transactions: state.transactions.filter(
+        (transaction) => transaction.id !== transactionId
+      ),
+    }));
+  },
   updateExpenseAmount: (expenseAmount: number) => {
     set((state) => ({ expenseAmount: state.expenseAmount + expenseAmount }));
   },

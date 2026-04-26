@@ -4,11 +4,20 @@ import {
   Text,
   SectionList,
   SectionListData,
+  TouchableOpacity,
+  Pressable,
 } from "react-native";
+import { useRef } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { LightColors } from "../../theme/color";
 import { Transaction } from "../../types/transaction";
 import { buildTransactionSection, extractDay } from "../../utils/helpers";
 import { NoTransactions } from "./ZeroStateTransaction";
+import { useTransactionStore } from "../../store/useTransactionStore";
+
+const SWIPE_ACTION_BUTTON_WIDTH = 80;
+const SWIPE_ACTIONS_TOTAL_WIDTH = SWIPE_ACTION_BUTTON_WIDTH * 2;
 
 type TransactionsHistoryProps = {
   transactions: Transaction[];
@@ -41,9 +50,13 @@ const TransactionDetailTile = ({
   return (
     <View style={styles.transactionDetailTileContainer}>
       <View style={styles.transactionDetailTileCategoryIcon}>{icon}</View>
-      <View>
-        <Text style={styles.transactionDetailTileTitle}>{title}</Text>
-        <Text style={styles.transactionDetailTileSubtitle}>{categoryName}</Text>
+      <View style={styles.transactionDetailTextContainer}>
+        <Text numberOfLines={1} style={styles.transactionDetailTileTitle}>
+          {title}
+        </Text>
+        <Text numberOfLines={1} style={styles.transactionDetailTileSubtitle}>
+          {categoryName}
+        </Text>
       </View>
     </View>
   );
@@ -54,7 +67,7 @@ const TransactionAmountDetail = ({
   transactionType,
 }: TransactionAmountDetailProps) => {
   return (
-    <View>
+    <View style={styles.transactionAmountContainer}>
       {transactionType === "income" ? (
         <Text style={styles.incomeAmount}>+₹{amount}</Text>
       ) : (
@@ -71,6 +84,13 @@ export const TransactionsHistory = ({
   transactions,
 }: TransactionsHistoryProps) => {
   const transactionsSectionsData = buildTransactionSection(transactions);
+  const swipeableMethodsById = useRef<
+    Record<string, { close: () => void } | undefined>
+  >({});
+  const openedRowId = useRef<string | null>(null);
+  const deleteTransaction = useTransactionStore(
+    (state) => state.deleteTransaction
+  );
 
   const extractKey = (item: Transaction, index: number) => {
     return item.id + "_" + String(index);
@@ -94,17 +114,74 @@ export const TransactionsHistory = ({
   };
 
   const renderTransactionsGroup = (item: Transaction) => {
+    const handleSwipeableWillOpen = () => {
+      const previouslyOpenedId = openedRowId.current;
+      if (previouslyOpenedId && previouslyOpenedId !== item.id) {
+        swipeableMethodsById.current[previouslyOpenedId]?.close();
+      }
+      openedRowId.current = item.id;
+    };
+
+    const handleSwipeableClose = () => {
+      if (openedRowId.current === item.id) {
+        openedRowId.current = null;
+      }
+    };
+
+    const renderRightActions = (
+      _progress: unknown,
+      _translation: unknown,
+      swipeableMethods: { close: () => void }
+    ) => {
+      swipeableMethodsById.current[item.id] = swipeableMethods;
+
+      /*
+       * Deletes a transaction.
+       * @params id: string
+       * @returns: updated transactions list
+       */
+      const handleTransactionDelete = (id: string) => {
+        deleteTransaction(id);
+      };
+
+      return (
+        <View style={styles.rightActionsContainer}>
+          <Pressable
+            style={[styles.rightActionButton, styles.deleteActionButton]}
+            onPress={() => handleTransactionDelete(item.id)}
+          >
+            <Text style={{ color: LightColors.background }}>Delete</Text>
+          </Pressable>
+          <TouchableOpacity
+            style={[styles.rightActionButton, styles.editActionButton]}
+          >
+            <Text style={{ color: LightColors.background }}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    };
     return (
-      <View style={styles.sectionListContainer}>
-        <TransactionDetailTile
-          icon={item.category.icon}
-          title={item.description}
-          categoryName={item.category.name}
-        />
-        <TransactionAmountDetail
-          amount={item.amount}
-          transactionType={item.type}
-        />
+      <View style={styles.transactionRowWrapper}>
+        <ReanimatedSwipeable
+          rightThreshold={SWIPE_ACTIONS_TOTAL_WIDTH / 2}
+          friction={1.5}
+          overshootRight={false}
+          onSwipeableWillOpen={handleSwipeableWillOpen}
+          onSwipeableClose={handleSwipeableClose}
+          renderRightActions={renderRightActions}
+        >
+          <View style={styles.sectionListContainer}>
+            <TransactionDetailTile
+              icon={item.category.icon}
+              title={item.description}
+              categoryName={item.category.name}
+            />
+            <TransactionAmountDetail
+              amount={item.amount}
+              transactionType={item.type}
+            />
+          </View>
+        </ReanimatedSwipeable>
       </View>
     );
   };
@@ -112,12 +189,14 @@ export const TransactionsHistory = ({
   return (
     <View style={styles.transactionsHistoryContainer}>
       {transactions.length === 0 && <NoTransactions />}
-      <SectionList
-        sections={transactionsSectionsData}
-        keyExtractor={(item, index) => extractKey(item, index)}
-        renderItem={({ item }) => renderTransactionsGroup(item)}
-        renderSectionHeader={({ section }) => dateSectionTitle(section)}
-      />
+      <GestureHandlerRootView>
+        <SectionList
+          sections={transactionsSectionsData}
+          keyExtractor={(item, index) => extractKey(item, index)}
+          renderItem={({ item }) => renderTransactionsGroup(item)}
+          renderSectionHeader={({ section }) => dateSectionTitle(section)}
+        />
+      </GestureHandlerRootView>
     </View>
   );
 };
@@ -162,12 +241,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 8,
+    gap: 12,
+    backgroundColor: LightColors.surface,
+    paddingVertical: 12,
+    paddingEnd: 8,
+  },
+  transactionRowWrapper: {
+    marginBottom: 6,
   },
   transactionDetailTileContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+  },
+  transactionDetailTextContainer: {
+    flex: 1,
+    flexShrink: 1,
+    marginRight: 8,
   },
   transactionDetailTileCategoryIcon: {
     backgroundColor: LightColors.surface,
@@ -189,6 +279,10 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     fontSize: 12,
   },
+  transactionAmountContainer: {
+    minWidth: 84,
+    marginLeft: 8,
+  },
   incomeAmount: {
     color: LightColors.success,
     textAlign: "right",
@@ -206,5 +300,23 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     textAlign: "right",
     fontSize: 12,
+  },
+  rightActionsContainer: {
+    flexDirection: "row",
+    width: SWIPE_ACTIONS_TOTAL_WIDTH,
+    alignItems: "center",
+  },
+  rightActionButton: {
+    width: SWIPE_ACTION_BUTTON_WIDTH,
+    height: "100%",
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  deleteActionButton: {
+    backgroundColor: LightColors.error,
+  },
+  editActionButton: {
+    backgroundColor: LightColors.textPrimary,
   },
 });
